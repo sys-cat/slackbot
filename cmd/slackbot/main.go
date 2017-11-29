@@ -8,11 +8,6 @@ import (
 	"github.com/nlopes/slack"
 )
 
-var (
-	botId   string
-	botName string
-)
-
 func run(api *slack.Client) int {
 	rtm := api.NewRTM()
 	go rtm.ManageConnection()
@@ -22,7 +17,7 @@ func run(api *slack.Client) int {
 		case *slack.HelloEvent:
 			log.Print("Hello Event")
 		case *slack.ConnectedEvent:
-			bot := ""
+			var bot string
 			for _, channel := range ev.Info.Channels {
 				if channel.Name == "bot" {
 					bot = channel.ID
@@ -34,6 +29,7 @@ func run(api *slack.Client) int {
 			// TODO : 自分自身をGlobalな変数で持つ
 			// TODO : 自分にメンションが来た時だけ反応する
 			// TODO : 自分が呼ばれたチャンネルを持つ
+			// TODO : 立ち上げ直した時に最後のメッセージを無視する
 			log.Printf("Channel: %s, Message: %s\n", ev.Msg.Channel, ev.Msg.Text)
 			mess := ev.Msg.Text
 			rtm.SendMessage(rtm.NewOutgoingMessage(fmt.Sprintf("Message is \"%s\"", mess), ev.Msg.Channel))
